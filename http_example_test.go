@@ -7,8 +7,6 @@ import (
 	"bytes"
 	"crypto/rsa"
 	"fmt"
-	"github.com/aldgate-ventures/jwt-go"
-	"github.com/aldgate-ventures/jwt-go/request"
 	"io"
 	"io/ioutil"
 	"log"
@@ -17,6 +15,9 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/aldgate-ventures/jwt-go"
+	"github.com/aldgate-ventures/jwt-go/request"
 )
 
 // location of the files used for signing and verification
@@ -151,6 +152,7 @@ func createToken(user string) (string, error) {
 			// set the expire time
 			// see http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-20#section-4.1.4
 			ExpiresAt: time.Now().Add(time.Minute * 1).Unix(),
+			IssuedAt:  time.Now().Add(time.Second * -10).Unix(),
 		},
 		"level1",
 		CustomerInfo{user, "human"},

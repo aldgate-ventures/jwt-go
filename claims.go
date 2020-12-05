@@ -35,13 +35,13 @@ func (c StandardClaims) Valid() error {
 
 	// The claims below are optional, by default, so if they are set to the
 	// default value in Go, let's not fail the verification for them.
-	if c.VerifyExpiresAt(now, false) == false {
+	if c.VerifyExpiresAt(now, true) == false {
 		delta := time.Unix(now, 0).Sub(time.Unix(c.ExpiresAt, 0))
 		vErr.Inner = fmt.Errorf("token is expired by %v", delta)
 		vErr.Errors |= ValidationErrorExpired
 	}
 
-	if c.VerifyIssuedAt(now, false) == false {
+	if c.VerifyIssuedAt(now, true) == false {
 		vErr.Inner = fmt.Errorf("Token used before issued")
 		vErr.Errors |= ValidationErrorIssuedAt
 	}
@@ -105,14 +105,14 @@ func verifyExp(exp int64, now int64, required bool) bool {
 	if exp == 0 {
 		return !required
 	}
-	return now <= exp
+	return now < exp
 }
 
 func verifyIat(iat int64, now int64, required bool) bool {
 	if iat == 0 {
 		return !required
 	}
-	return now >= iat
+	return now > iat
 }
 
 func verifyIss(iss string, cmp string, required bool) bool {
